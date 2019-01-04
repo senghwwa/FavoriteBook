@@ -18,6 +18,9 @@ class BookTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Statement below adds the edit button to the navigation bar !!
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
 
     }
     
@@ -44,13 +47,24 @@ class BookTableViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            print("Deleting \(indexPath.row)")
+            books.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        return .delete
+    }
+
+    
     // MARK: - Navigation
     
     @IBAction func prepareForUnwind(segue: UIStoryboardSegue) {
-        print("Inside prepare for unwind")
         guard let source = segue.source as? BookFormTableViewController,
             let book = source.book else {return}
-        print("Unwound")
         if let indexPath = tableView.indexPathForSelectedRow {
             books.remove(at: indexPath.row)
             books.insert(book, at: indexPath.row)
